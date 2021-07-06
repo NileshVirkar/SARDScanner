@@ -3,8 +3,11 @@ package com.project.sardscanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
+import com.project.sardscanner.db.ReadH2Dao;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,13 +20,15 @@ public class SardScannerExecutor {
 	private static final String NEW_LINE_SEPARATOR = "\n";
 	private static final String OUTPUT_FILE = "sardScan.csv";
 	private static Logger logger = LogManager.getLogger(SardScannerExecutor.class);
+	private ReadH2Dao readH2Dao;
 
-	public SardScannerExecutor(SardScannerParams params) {
+	public SardScannerExecutor(SardScannerParams params) throws SARDScannerException {
 		this.params = params;
-
+		String dataDir = ""; //TODO: this should come from SardScannerParams
+		this.readH2Dao = new ReadH2Dao(H2DBConnector.getConnection("jdbc:h2:"+dataDir+"/corona.db;user=coronadb;password=coronadb;WRITE_DELAY=25000"));
 	}
 
-	public void execute() {
+	public void execute() throws SARDScannerException {
 
 		File parentDir = new File(params.getBaseDir());
 		Collection<File> files = FileUtils.listFiles(parentDir, null, true);
@@ -35,6 +40,13 @@ public class SardScannerExecutor {
 		logger.info("Scanner started");
 
 		for (File file : files) {
+			//TODO: Changes require
+			try {
+				List<String> list = this.readH2Dao.getCIForFile(file.getPath());
+			} catch (SQLException throwables) {
+				throw new SARDScannerException(throwables);
+			}
+
 			writeCsv(file, sb);
 
 		}

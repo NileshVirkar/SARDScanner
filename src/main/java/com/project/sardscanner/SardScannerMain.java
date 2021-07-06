@@ -27,7 +27,7 @@ public class SardScannerMain {
 			SardScannerExecutor executor = new SardScannerExecutor(params);
 			executor.execute();
 
-		} catch (ParseException e) {
+		} catch (ParseException | SARDScannerException e) {
 			logger.error("Error parsing build options", e);
 		}
 
