@@ -17,6 +17,39 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.10</version>
+				<executions>
+					<execution>
+						<id>assemble-standalone</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+						<configuration>
+							<extraJvmArguments> -Xmx1024m
+
+						</extraJvmArguments>
+							<programs>
+								<program>
+									<mainClass> com.project.sardscanner.SardScannerMain
+								</mainClass>
+									<name>runner</name>
+								</program>
+							</programs>
+							<platforms>
+								<platform>windows</platform>
+								<platform>unix</platform>
+							</platforms>
+							<configurationDirectory> config </configurationDirectory>
+							<repositoryLayout>flat</repositoryLayout>
+							<repositoryName>lib</repositoryName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
